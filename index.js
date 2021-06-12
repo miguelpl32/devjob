@@ -14,6 +14,10 @@ require('dotenv').config({ path : 'variables.env'});
 
 const app = express();
 
+// habilitar leer los datos del formulario
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+
 //habilar handlebars como view  
 app.engine('handlebars', exphbs({ defaultLayout: 'layout', helpers: require('./helpers/handlebars')}));
 
