@@ -8,6 +8,8 @@ const router = require('./routes');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
 
 require('dotenv').config({ path : 'variables.env'});
 
@@ -17,6 +19,9 @@ const app = express();
 // habilitar leer los datos del formulario
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
+// Validacion de campos instalar esta version npm install express-validator@5.3.1
+app.use(expressValidator());
 
 //habilar handlebars como view  
 app.engine('handlebars', exphbs({ defaultLayout: 'layout', helpers: require('./helpers/handlebars')}));
@@ -35,6 +40,15 @@ app.use(session({
     saveUninitialized: false,
     store: MongoStore.create({mongoUrl: process.env.DATABASE})
 }));
+
+// Alertas y flash messages
+app.use(flash());
+
+// Crear nuestro middleware
+app.use((req, res, next) => {
+    res.locals.mensajes = req.flash();
+    next();
+});
 
 app.use('/', router());
 
