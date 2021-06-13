@@ -43,7 +43,6 @@ exports.validarRegistro = (req, res, next) => {
 exports.crearUsuario = async (req, res, next) => {
     // crear el Usuarios
     const usuario = new Usuarios(req.body);
-
     
     try {
         await usuario.save();
