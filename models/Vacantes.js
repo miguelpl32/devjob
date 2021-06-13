@@ -7,7 +7,7 @@ const vacantesSchema = new mongoose.Schema({
     titulo: {
         type: String,
         required: 'El nombre de la vacante es obligatorio',
-        trim:  true
+        trim: true
     },
     empresa: {
         type: String,
@@ -31,7 +31,7 @@ const vacantesSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    url : {
+    url: {
         type: String,
         lowercase: true
     },
@@ -40,12 +40,18 @@ const vacantesSchema = new mongoose.Schema({
         nombre: String,
         email: String,
         cv: String
-    }]
+    }],
+    // relacionar con el Schema Usuarios para saber sus vacantes
+    autor: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Usuarios',
+        required: 'El autor es obligatorio'
+    }
 
 });
 
 // Middleware de mongo
-vacantesSchema.pre('save', function(next){
+vacantesSchema.pre('save', function (next) {
 
     // crear la url
     const url = slug(this.titulo);

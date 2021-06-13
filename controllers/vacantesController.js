@@ -12,14 +12,17 @@ exports.formularioNuevaVacante = (req, res) => {
 exports.agregarVacante = async (req, res) => {
     const vacante = new Vacante(req.body);
 
+    // Usuario autor de la Vacante 
+    vacante.autor = req.user._id;
+
     // crear arreglo de habilidades (skills)
     vacante.skills = req.body.skills.split(',');
-    
+
     // almacenarlo en la BD
     const nuevaVacante = await vacante.save();
 
     // redireccionar
-    res.redirect(`/vacantes/${nuevaVacante.url}`);    
+    res.redirect(`/vacantes/${nuevaVacante.url}`);
 
 }
 
@@ -28,24 +31,24 @@ exports.mostrarVacante = async (req, res, next) => {
     const vacante = await Vacante.findOne({ url: req.params.url }).lean();
 
     // si no hay resultados
-    if(!vacante) return next();
+    if (!vacante) return next();
 
     res.render('vacante', {
         vacante,
-        nombrePagina : vacante.titulo,
+        nombrePagina: vacante.titulo,
         barra: true
     })
 }
 
 // editar Vacante
 exports.formEditarVacante = async (req, res, next) => {
-    const vacante = await Vacante.findOne({ url : req.params.url}).lean();
+    const vacante = await Vacante.findOne({ url: req.params.url }).lean();
 
-    if(!vacante) return next();
+    if (!vacante) return next();
 
     res.render('editar-vacante', {
         vacante,
-        nombrePagina : `Editar - ${vacante.titulo}`
+        nombrePagina: `Editar - ${vacante.titulo}`
 
     })
 }
@@ -56,7 +59,7 @@ exports.editarVacante = async (req, res) => {
 
     vacanteActualizada.skills = req.body.skills.split(',');
 
-    const vacante = await Vacante.findOneAndUpdate({ url: req.params.url}, vacanteActualizada, {
+    const vacante = await Vacante.findOneAndUpdate({ url: req.params.url }, vacanteActualizada, {
         new: true,
         runValidators: true
     });
