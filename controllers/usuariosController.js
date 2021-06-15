@@ -1,5 +1,5 @@
 const Usuarios = require('../models/Usuarios');
-const expressValidator = require("express-validator");
+
 
 exports.formCrearCuenta = (req, res) => {
     res.render('crear-cuenta', {
