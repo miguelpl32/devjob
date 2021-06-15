@@ -1,4 +1,5 @@
 const Usuarios = require('../models/Usuarios');
+const expressValidator = require("express-validator");
 
 exports.formCrearCuenta = (req, res) => {
     res.render('crear-cuenta', {
@@ -89,3 +90,37 @@ exports.editarPerfil = async (req, res) => {
     res.redirect('/administracion');
     //console.log(usuario);
 }
+
+// sanitizar y validar el formulario de editar perfiles.
+
+exports.validarPerfil = (req, res, next) => {
+
+    // sanitizar
+    req.sanitizeBody('nombre').escape();
+    req.sanitizeBody('email').escape();
+
+    if (req.body.password) {
+        req.sanitizeBody('password').escape();
+    }
+
+    // validar
+    req.checkBody('nombre', 'El nombre no puede ir vacio').notEmpty();
+    req.checkBody('email', 'El correo no puede ir vacio').notEmpty();
+
+    const errores = req.validationErrors();
+
+    if (errores) {
+        req.flash('error', errores.map(error => error.msg));
+
+        res.render('editar-perfil', {
+            nombrePagina: 'Edita tu perfil en devJobs',
+            usuario: req.user,
+            cerrarSesion: true,
+            nombre: req.user.nombre,
+            mensajes: req.flash()
+        });
+    }
+
+    next();
+}
+
