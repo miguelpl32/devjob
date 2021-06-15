@@ -16,7 +16,7 @@ exports.validarRegistro = (req, res, next) => {
     req.sanitizeBody('confirmar').escape();
 
     // Validar
-    req.checkBody('nombre', 'El Nombre es Obligatorio'). notEmpty();
+    req.checkBody('nombre', 'El Nombre es Obligatorio').notEmpty();
     req.checkBody('email', 'El email debe ser valido').isEmail();
     req.checkBody('password', 'El password no puede ir vacio').notEmpty();
     req.checkBody('confirmar', 'Confirmar password no puede ir vacio').notEmpty();
@@ -24,7 +24,7 @@ exports.validarRegistro = (req, res, next) => {
 
     const errores = req.validationErrors();
 
-    if(errores){
+    if (errores) {
         // si no hay errores
         req.flash('error', errores.map(error => error.msg));
 
@@ -35,7 +35,7 @@ exports.validarRegistro = (req, res, next) => {
         });
         return
     }
-        // Si toda la validación es correcta pasa al siguiente middleware
+    // Si toda la validación es correcta pasa al siguiente middleware
     next();
 
 }
@@ -44,14 +44,14 @@ exports.crearUsuario = async (req, res, next) => {
     // crear el Usuarios
     const usuario = new Usuarios(req.body);
 
-    
+
     try {
         await usuario.save();
         res.redirect('/iniciar-sesion');
     } catch (error) {
         req.flash('error', error);
         res.redirect('/crear-cuenta');
-    }    
+    }
     // console.log(usuario);
 }
 
@@ -62,3 +62,28 @@ exports.formIniciarSesion = (req, res) => {
     })
 }
 
+// Form editar el Perfil
+exports.formEditarPerfil = (req, res) => {
+    res.render('editar-perfil', {
+        nombrePagina: 'Edita tu perfil en devJobs',
+        usuario: req.user
+    });
+}
+
+// Guardar cambios editar perfil
+exports.editarPerfil = async (req, res) => {
+    const usuario = await Usuarios.findById(req.user._id);
+
+    usuario.nombre = req.body.nombre;
+    usuario.email = req.body.email;
+    if (req.body.password) {
+        usuario.password = req.body.password
+    }
+    await usuario.save();
+
+    req.flash('correcto', 'Cambios guardados correctamente');
+
+    //redirect
+    res.redirect('/administracion');
+    //console.log(usuario);
+}

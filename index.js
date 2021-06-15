@@ -11,6 +11,8 @@ const MongoStore = require("connect-mongo");
 const expressValidator = require("express-validator");
 const flash = require("connect-flash");
 const passport = require("./config/passport");
+const Handlebars = require('handlebars');
+const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 
 require("dotenv").config({ path: "variables.env" });
 
@@ -29,6 +31,7 @@ app.engine(
     exphbs({
         defaultLayout: "layout",
         helpers: require("./helpers/handlebars"),
+        handlebars: allowInsecurePrototypeAccess(Handlebars)
     })
 );
 
